@@ -9,7 +9,9 @@ let comentarios = [];
 let muralController = {
 
     index: (req, res) => {
-        let html_comentarios = comentarios.join("<br>");
+        let html_comentarios = comentarios.map((comentario, posicao) => {
+            return '<a href="/mural/deletar/'+posicao+'"/>'+comentario+'</a>'
+        }).join("<br>");
         res.send("Estou no meu mural<br>" + html_comentarios);
     },
 
@@ -21,6 +23,15 @@ let muralController = {
     showComentario: (req, res) => {
         let numero = req.params.numero;
         res.send(comentarios[numero]);
+    },
+
+    /**
+     * Exclui um comentário da lista de comentários pela posição.
+     */
+    excluirComentario: (req, res) => {
+        let {numero} = req.params;
+        comentarios.splice(numero, 1);
+        res.send("Comentário excluido com sucesso!");
     }
 }
 
@@ -28,6 +39,7 @@ let muralController = {
 app.get("/mural", muralController.index);
 app.get("/mural/:numero", muralController.showComentario);
 app.get("/comentar", muralController.comentar);
+app.get("/mural/deletar/:numero", muralController.excluirComentario)
 
 
 // Inicia o servidor NODE
